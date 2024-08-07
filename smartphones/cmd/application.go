@@ -11,7 +11,7 @@ type Application struct {
 	ErrorLogger *log.Logger
 	Infologger  *log.Logger
 	Server      *http.Server
-	DB          PostgresDB
+	DB          *PostgresDB
 }
 
 func NewApplication() *Application {
@@ -37,7 +37,7 @@ func NewApplication() *Application {
 		ErrorLogger: errorLogger,
 		Infologger:  infoLogger,
 		Server:      server,
-		DB:          postgres,
+		DB:          &postgres,
 	}
 
 	app.Server.Handler = app.NewRouter()
