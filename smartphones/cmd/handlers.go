@@ -76,7 +76,7 @@ func (app *Application) Create(w http.ResponseWriter, r *http.Request) {
 func (app *Application) ErrorJSON(w http.ResponseWriter, err error) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
-	app.ErrorLogger.Println(err)
+	app.ErrorLogger.Println(err.Error())
 	var code int
 	switch err {
 	case sql.ErrNoRows:
@@ -89,7 +89,11 @@ func (app *Application) ErrorJSON(w http.ResponseWriter, err error) {
 		code = http.StatusInternalServerError
 	}
 	w.WriteHeader(code)
-	json.NewEncoder(w).Encode(err)
+	json.NewEncoder(w).Encode(struct {
+		Error string `json:"error"`
+	}{
+		Error: err.Error(),
+	})
 }
 
 func (app *Application) Encode(w http.ResponseWriter, obj interface{}) {
