@@ -26,14 +26,14 @@ func (server *grpcServer) GetOneGrpc(ctx context.Context, request *pb.OneRequest
 	}
 	return &pb.OneResponse{
 		Smartphone: &pb.Smartphone{
-			Id:          sm.ID,
+			Id:          uint32(sm.ID),
 			Model:       sm.Model,
 			Producer:    sm.Producer,
 			Color:       sm.Color,
 			ScreenSize:  sm.ScreenSize,
 			Description: *sm.Description,
 			Image:       *sm.Image,
-			Price:       sm.Price,
+			Price:       uint32(sm.Price),
 		},
 	}, nil
 }
@@ -58,7 +58,6 @@ func main() {
 		DB:          app.DB,
 		ErrorLogger: app.ErrorLogger,
 	})
-	log.Println("serving ", lis.Addr().String())
 	app.Infologger.Println("listening grpc requests at ", lis.Addr())
 	err = server.Serve(lis)
 	if err != nil {
