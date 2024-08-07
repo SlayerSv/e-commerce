@@ -3,16 +3,16 @@ package main
 import "fmt"
 
 type Smartphone struct {
-	ID          int     `json:"id"`
+	ID          uint32  `json:"id"`
 	Model       string  `json:"model"`
 	Producer    string  `json:"producer"`
 	Color       string  `json:"color"`
-	ScreenSize  float64 `json:"screenSize"`
+	ScreenSize  float32 `json:"screenSize"`
 	Description string  `json:"description"`
 	Image       string  `json:"image"`
-	Price       int     `json:"price"`
+	Price       uint32  `json:"price"`
 }
 
 func (sm *Smartphone) GetPrice() string {
-	return fmt.Sprintf("%.2f\n", float64(sm.Price)/100.0)
+	return fmt.Sprintf("%.2f\n", float32(sm.Price)/100.0)
 }

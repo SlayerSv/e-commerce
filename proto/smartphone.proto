@@ -10,7 +10,7 @@ service SmartphoneService {
 }
 
 message OneRequest {
-  int64 id = 1;
+  uint32 id = 1;
 }
 
 message OneResponse {
@@ -22,8 +22,8 @@ message ManyRequest {
   optional string producer = 2;
   optional string color = 3;
   optional float screen_size = 4;
-  optional int32 min_price = 5;
-  optional int32 max_price = 6;
+  optional uint32 min_price = 5;
+  optional uint32 max_price = 6;
 }
 
 message ManyResponse {
@@ -31,12 +31,12 @@ message ManyResponse {
 }
 
 message Smartphone {
-  int32 id = 1;
+  uint32 id = 1;
   string model = 2;
   string producer = 3;
   string color = 4;
   float screen_size = 5;
   string description = 6;
   string image = 7;
-  int32 price = 8;
+  uint32 price = 8;
 }
