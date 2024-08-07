@@ -15,38 +15,38 @@ var errIncorrectID = errors.New("incorrect id")
 func (app *Application) GetAll(w http.ResponseWriter, r *http.Request) {
 	smartphones, err := app.DB.GetAll()
 	if err != nil {
-		app.ErrorJSON(w, err)
+		app.ErrorJSON(w, r, err)
 		return
 	}
-	app.Encode(w, smartphones)
+	app.Encode(w, r, smartphones)
 }
 
 func (app *Application) GetOne(w http.ResponseWriter, r *http.Request) {
 	id, err := app.ExtractID(r)
 	if err != nil {
-		app.ErrorJSON(w, err)
+		app.ErrorJSON(w, r, err)
 		return
 	}
 	smartphone, err := app.DB.GetOne(id)
 	if err != nil {
-		app.ErrorJSON(w, err)
+		app.ErrorJSON(w, r, err)
 		return
 	}
-	app.Encode(w, smartphone)
+	app.Encode(w, r, smartphone)
 }
 
 func (app *Application) Delete(w http.ResponseWriter, r *http.Request) {
 	id, err := app.ExtractID(r)
 	if err != nil {
-		app.ErrorJSON(w, err)
+		app.ErrorJSON(w, r, err)
 		return
 	}
 	smartphone, err := app.DB.Delete(id)
 	if err != nil {
-		app.ErrorJSON(w, err)
+		app.ErrorJSON(w, r, err)
 		return
 	}
-	app.Encode(w, smartphone)
+	app.Encode(w, r, smartphone)
 }
 
 func (app *Application) Update(w http.ResponseWriter, r *http.Request) {
@@ -55,10 +55,10 @@ func (app *Application) Update(w http.ResponseWriter, r *http.Request) {
 	decoder.Decode(&sm)
 	sm, err := app.DB.Update(sm)
 	if err != nil {
-		app.ErrorJSON(w, err)
+		app.ErrorJSON(w, r, err)
 		return
 	}
-	app.Encode(w, sm)
+	app.Encode(w, r, sm)
 }
 
 func (app *Application) Create(w http.ResponseWriter, r *http.Request) {
@@ -67,16 +67,16 @@ func (app *Application) Create(w http.ResponseWriter, r *http.Request) {
 	decoder.Decode(&sm)
 	sm, err := app.DB.Create(sm)
 	if err != nil {
-		app.ErrorJSON(w, err)
+		app.ErrorJSON(w, r, err)
 		return
 	}
-	app.Encode(w, sm)
+	app.Encode(w, r, sm)
 }
 
-func (app *Application) ErrorJSON(w http.ResponseWriter, err error) {
+func (app *Application) ErrorJSON(w http.ResponseWriter, r *http.Request, err error) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
-	app.ErrorLogger.Println(err.Error())
+	app.ErrorLogger.Println(r.Method, r.URL, err.Error())
 	var code int
 	switch err {
 	case sql.ErrNoRows:
@@ -96,13 +96,13 @@ func (app *Application) ErrorJSON(w http.ResponseWriter, err error) {
 	})
 }
 
-func (app *Application) Encode(w http.ResponseWriter, obj interface{}) {
+func (app *Application) Encode(w http.ResponseWriter, r *http.Request, obj interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	encoder := json.NewEncoder(w)
 	encoder.SetIndent("", "  ")
 	err := encoder.Encode(obj)
 	if err != nil {
-		app.ErrorJSON(w, err)
+		app.ErrorJSON(w, r, err)
 		return
 	}
 }

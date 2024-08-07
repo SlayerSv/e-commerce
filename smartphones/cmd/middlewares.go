@@ -16,7 +16,7 @@ func (app *Application) RecoverPanic(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			if err := recover(); err != nil {
-				app.ErrorJSON(w, errInternal)
+				app.ErrorJSON(w, r, errInternal)
 				app.ErrorLogger.Println(err, string(debug.Stack()))
 			}
 		}()
