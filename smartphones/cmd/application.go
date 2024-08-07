@@ -15,10 +15,10 @@ type Application struct {
 }
 
 func NewApplication() *Application {
-	errorLogger := log.New(os.Stderr, "ERROR\t", log.LUTC|log.Lshortfile)
-	infoLogger := log.New(os.Stdout, "INFO\t", log.LUTC)
+	errorLogger := log.New(os.Stderr, "ERROR\t", log.Flags()|log.LUTC)
+	infoLogger := log.New(os.Stdout, "INFO\t", log.Flags()|log.LUTC)
 
-	conn, err := os.ReadFile("DBConnectionString")
+	conn, err := os.ReadFile("../DBConnectionString")
 	if err != nil {
 		errorLogger.Fatal(err)
 	}
