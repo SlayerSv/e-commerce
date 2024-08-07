@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package smartphone;
+
+option go_package = "github.com/slayersv/e-commerce/proto";
+
+service SmartphoneService {
+  rpc GetOne (OneRequest) returns (OneResponse);
+  rpc GetMany (ManyRequest) returns (ManyResponse);
+}
+
+message OneRequest {
+  int64 id = 1;
+}
+
+message OneResponse {
+  optional Smartphone smartphone = 1;
+}
+
+message ManyRequest {
+  optional string model = 1;
+  optional string producer = 2;
+  optional string color = 3;
+  optional float screen_size = 4;
+  optional int32 min_price = 5;
+  optional int32 max_price = 6;
+}
+
+message ManyResponse {
+  repeated Smartphone smartphones = 1;
+}
+
+message Smartphone {
+  int32 id = 1;
+  string model = 2;
+  string producer = 3;
+  string color = 4;
+  float screen_size = 5;
+  string description = 6;
+  string image = 7;
+  int32 price = 8;
+}
