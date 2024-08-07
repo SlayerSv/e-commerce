@@ -10,6 +10,6 @@ func (app *Application) NewRouter() http.Handler {
 	router.HandleFunc("GET /smartphones/{id}", app.GetOne)
 	router.HandleFunc("DELETE /smartphones/{id}", app.Delete)
 	router.HandleFunc("POST /smartphones", app.Create)
-	router.HandleFunc("UPDATE /smartphones", app.Update)
+	router.HandleFunc("PUT /smartphones", app.Update)
 	return app.LogRequests(router)
 }

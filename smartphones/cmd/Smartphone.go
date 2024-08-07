@@ -8,8 +8,8 @@ type Smartphone struct {
 	Producer    string  `json:"producer"`
 	Color       string  `json:"color"`
 	ScreenSize  float32 `json:"screenSize"`
-	Description string  `json:"description"`
-	Image       string  `json:"image"`
+	Description *string `json:"description"`
+	Image       *string `json:"image"`
 	Price       uint32  `json:"price"`
 }
 

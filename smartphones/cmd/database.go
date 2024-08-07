@@ -45,11 +45,13 @@ func (db *PostgresDB) Delete(id int) (Smartphone, error) {
 func (db *PostgresDB) Update(sm Smartphone) (Smartphone, error) {
 	query := `
 	UPDATE smartphones
-	SET model = $1, producer = $2, color = $3, screenSize = $4, price = $5
-	WHERE id = $6
+	SET model = $1, producer = $2, color = $3, screen_size = $4,
+	description = $5, image = $6, price = $7
+	WHERE id = $8
 	RETURNING *
 	`
-	row := db.QueryRow(query, sm.Model, sm.Producer, sm.Color, sm.ScreenSize, sm.Price, sm.ID)
+	row := db.QueryRow(query, sm.Model, sm.Producer, sm.Color, sm.ScreenSize,
+		sm.Description, sm.Image, sm.Price, sm.ID)
 	sm, err := db.ExtractOne(row)
 	if err != nil {
 		return sm, err
@@ -59,11 +61,12 @@ func (db *PostgresDB) Update(sm Smartphone) (Smartphone, error) {
 
 func (db *PostgresDB) Create(sm Smartphone) (Smartphone, error) {
 	query := `
-	INSERT INTO smartphones (model, producer, color, screenSize, price)
-	VALUES ($1, $2, $3, $4, $5)
+	INSERT INTO smartphones (model, producer, color, screen_size, description, image, price)
+	VALUES ($1, $2, $3, $4, $5, $6, $7)
 	RETURNING *
 	`
-	row := db.QueryRow(query, sm.Model, sm.Producer, sm.Color, sm.ScreenSize, sm.Price)
+	row := db.QueryRow(query, sm.Model, sm.Producer, sm.Color, sm.ScreenSize,
+		sm.Description, sm.Image, sm.Price)
 	sm, err := db.ExtractOne(row)
 	if err != nil {
 		return sm, err
@@ -73,7 +76,8 @@ func (db *PostgresDB) Create(sm Smartphone) (Smartphone, error) {
 
 func (db *PostgresDB) ExtractOne(row *sql.Row) (Smartphone, error) {
 	sm := Smartphone{}
-	err := row.Scan(&sm.ID, &sm.Model, &sm.Producer, &sm.Color, &sm.ScreenSize, &sm.Price)
+	err := row.Scan(&sm.ID, &sm.Model, &sm.Producer, &sm.Color,
+		&sm.ScreenSize, &sm.Description, &sm.Image, &sm.Price)
 	if err != nil {
 		return sm, err
 	}
@@ -85,7 +89,8 @@ func (db *PostgresDB) ExtractMany(rows *sql.Rows) ([]Smartphone, error) {
 	smartphones := []Smartphone{}
 	for rows.Next() {
 		sm := Smartphone{}
-		err := rows.Scan(&sm.ID, &sm.Model, &sm.Producer, &sm.Color, &sm.ScreenSize, &sm.Price)
+		err := rows.Scan(&sm.ID, &sm.Model, &sm.Producer, &sm.Color,
+			&sm.ScreenSize, &sm.Description, &sm.Image, &sm.Price)
 		if err != nil {
 			return nil, err
 		}
