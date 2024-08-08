@@ -14,23 +14,42 @@ type grpcHandler struct {
 	ErrorLogger *log.Logger
 }
 
-func (server *grpcHandler) GetOne(ctx context.Context, request *pb.OneRequest) (*pb.OneResponse, error) {
+func (handler *grpcHandler) GetOne(ctx context.Context, request *pb.OneRequest) (*pb.OneResponse, error) {
 	id := request.GetId()
-	sm, err := server.DB.GetOne(int(id))
+	sm, err := handler.DB.GetOne(int(id))
 	if err != nil {
-		server.ErrorLogger.Println(err)
+		handler.ErrorLogger.Println(err)
 		return nil, err
 	}
 	return &pb.OneResponse{
-		Smartphone: &pb.Smartphone{
-			Id:          uint32(sm.ID),
-			Model:       sm.Model,
-			Producer:    sm.Producer,
-			Color:       sm.Color,
-			ScreenSize:  sm.ScreenSize,
-			Description: *sm.Description,
-			Image:       *sm.Image,
-			Price:       uint32(sm.Price),
-		},
+		Smartphone: handler.Convert(sm),
 	}, nil
+}
+
+func (handler grpcHandler) GetMany(ctx context.Context, request *pb.ManyRequest) (*pb.ManyResponse, error) {
+	smarts, err := handler.DB.GetAll()
+	if err != nil {
+		handler.ErrorLogger.Println(err)
+		return nil, err
+	}
+	smartphones := make([]*pb.Smartphone, len(smarts))
+	for i, sm := range smarts {
+		smartphones[i] = handler.Convert(sm)
+	}
+	return &pb.ManyResponse{
+		Smartphones: smartphones,
+	}, nil
+}
+
+func (handler grpcHandler) Convert(sm Smartphone) *pb.Smartphone {
+	return &pb.Smartphone{
+		Id:          uint32(sm.ID),
+		Model:       sm.Model,
+		Producer:    sm.Producer,
+		Color:       sm.Color,
+		ScreenSize:  sm.ScreenSize,
+		Description: sm.Description,
+		Image:       sm.Image,
+		Price:       uint32(sm.Price),
+	}
 }

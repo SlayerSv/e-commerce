@@ -13,12 +13,11 @@ func main() {
 		app.ErrorLogger.Fatalln(app.HttpServer.ListenAndServe())
 	}()
 
-	go func() {
-		lis, err := net.Listen("tcp", fmt.Sprintf(":%d", app.GrpcHandler.Port))
-		if err != nil {
-			app.ErrorLogger.Fatalln(err)
-		}
-		app.Infologger.Println("listening grpc requests at ", lis.Addr())
-		app.ErrorLogger.Fatalln(app.GrpcServer.Serve(lis))
-	}()
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", app.GrpcHandler.Port))
+	if err != nil {
+		app.ErrorLogger.Fatalln(err)
+	}
+	app.Infologger.Println("listening grpc requests at ", lis.Addr())
+	app.ErrorLogger.Fatalln(app.GrpcServer.Serve(lis))
+
 }
