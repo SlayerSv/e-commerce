@@ -1,12 +1,15 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"log"
 	"net/http"
 	"os"
 
 	pb "github.com/slayersv/e-commerce/proto"
+
+	"github.com/twmb/franz-go/pkg/kgo"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
@@ -17,6 +20,7 @@ type Application struct {
 	HttpServer  *http.Server
 	GrpcServer  *grpc.Server
 	GrpcHandler *grpcHandler
+	Kafka       *kgo.Client
 	DB          *PostgresDB
 }
 
@@ -57,5 +61,11 @@ func NewApplication() *Application {
 	}
 	app.HttpServer.Handler = app.NewRouter()
 
+	kafka, err := app.NewKafkaClient()
+	if err != nil {
+		app.ErrorLogger.Fatalln(err)
+	}
+	app.Kafka = kafka
+	app.Infologger.Println(app.Kafka.Ping(context.Background()))
 	return app
 }

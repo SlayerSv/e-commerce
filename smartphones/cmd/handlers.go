@@ -77,6 +77,7 @@ func (app *Application) ErrorJSON(w http.ResponseWriter, r *http.Request, err er
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
 	app.ErrorLogger.Println(r.Method, r.URL, err.Error())
+	app.NewErrorMessage(err)
 	var code int
 	switch err {
 	case sql.ErrNoRows:
