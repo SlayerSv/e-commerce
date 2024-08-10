@@ -26,4 +26,6 @@ func main() {
 		log.Println(err)
 	}
 	fmt.Println(smartphone)
+
+	NewKafkaClient()
 }
