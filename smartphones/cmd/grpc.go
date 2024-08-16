@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"log"
 
 	pb "github.com/slayersv/e-commerce/proto"
@@ -21,7 +22,12 @@ func (handler *grpcHandler) GetOne(ctx context.Context, request *pb.OneRequest) 
 	sm, err := handler.DB.GetOne(int(id))
 	if err != nil {
 		handler.ErrorLogger.Println(err)
-		return nil, status.Error(codes.NotFound, err.Error())
+		if err == sql.ErrNoRows {
+			return nil, status.Error(codes.NotFound, err.Error())
+		} else {
+			return nil, status.Error(codes.Internal, "internal error")
+		}
+
 	}
 	return &pb.OneResponse{
 		Smartphone: handler.Convert(sm),
@@ -32,7 +38,7 @@ func (handler grpcHandler) GetMany(ctx context.Context, request *pb.ManyRequest)
 	smarts, err := handler.DB.GetAll()
 	if err != nil {
 		handler.ErrorLogger.Println(err)
-		return nil, status.Error(codes.Internal, err.Error())
+		return nil, status.Error(codes.Internal, "internal error")
 	}
 	smartphones := make([]*pb.Smartphone, len(smarts))
 	for i, sm := range smarts {
