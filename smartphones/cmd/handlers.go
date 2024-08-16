@@ -79,13 +79,13 @@ func (app *Application) ErrorJSON(w http.ResponseWriter, r *http.Request, err er
 	app.ErrorLogger.Println(r.Method, r.URL, err.Error())
 	app.NewErrorMessage(err)
 	var code int
-	switch err {
-	case sql.ErrNoRows:
+	if errors.Is(err, sql.ErrNoRows) {
 		err = errNotfound
 		code = http.StatusNotFound
-	case errIncorrectID:
+	} else if errors.Is(err, errIncorrectID) {
+		err = errIncorrectID
 		code = http.StatusBadRequest
-	default:
+	} else {
 		err = errInternal
 		code = http.StatusInternalServerError
 	}
