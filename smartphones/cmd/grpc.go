@@ -5,6 +5,8 @@ import (
 	"log"
 
 	pb "github.com/slayersv/e-commerce/proto"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type grpcHandler struct {
@@ -19,7 +21,7 @@ func (handler *grpcHandler) GetOne(ctx context.Context, request *pb.OneRequest) 
 	sm, err := handler.DB.GetOne(int(id))
 	if err != nil {
 		handler.ErrorLogger.Println(err)
-		return nil, err
+		return nil, status.Error(codes.NotFound, err.Error())
 	}
 	return &pb.OneResponse{
 		Smartphone: handler.Convert(sm),
@@ -30,7 +32,7 @@ func (handler grpcHandler) GetMany(ctx context.Context, request *pb.ManyRequest)
 	smarts, err := handler.DB.GetAll()
 	if err != nil {
 		handler.ErrorLogger.Println(err)
-		return nil, err
+		return nil, status.Error(codes.Internal, err.Error())
 	}
 	smartphones := make([]*pb.Smartphone, len(smarts))
 	for i, sm := range smarts {
