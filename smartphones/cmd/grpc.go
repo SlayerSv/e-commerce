@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"log"
 
 	pb "github.com/slayersv/e-commerce/proto"
@@ -22,7 +23,7 @@ func (handler *grpcHandler) GetOne(ctx context.Context, request *pb.OneRequest) 
 	sm, err := handler.DB.GetOne(int(id))
 	if err != nil {
 		handler.ErrorLogger.Println(err)
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return nil, status.Error(codes.NotFound, err.Error())
 		} else {
 			return nil, status.Error(codes.Internal, "internal error")
